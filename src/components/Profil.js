@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Redirect, Link } from 'react-router-dom'
+import { isEmpty } from 'lodash'
 
 export default class SignUp extends Component {
     constructor(props) {
@@ -10,7 +11,9 @@ export default class SignUp extends Component {
             firstname: '',
             lastname: '',
             nickname: '',
-            error: ''
+            error: '',
+            redirectionToSignIn: false,
+            storageItems: ['user', 'token']
         }
     }
 
@@ -19,14 +22,17 @@ export default class SignUp extends Component {
     }
 
     async getDataStorage() {
-        const data = await localStorage.getItem('data')
-        if (!data) {
-            console.log('No user')
+        const data = await JSON.parse(localStorage.getItem('data'))
+        const missings = this.state.storageItems.filter((storageItem) => data[storageItem])
+
+        if (!isEmpty(missings)) {
+            const isPlural = missings.length > 1
+
+            console.log(`Storage item${isPlural ? 's' : ''} [ ${missings.join(', ')} ] ${isPlural ? 'are' : 'is'} missing`)
             this.setState({ redirectionToSignIn: true })
         }
         else {
-            const jsonData = JSON.parse(data)
-            this.setState({ user: jsonData.user, token: jsonData.meta.token, })
+            this.setState({ user: data.user, token: data.meta.token, })
             console.log(this.state.user, this.state.token)
         }
     }
@@ -37,7 +43,7 @@ export default class SignUp extends Component {
 
     updateUser = async () => {
         const { user, token } = this.state
-        const req = await fetch(`${process.env.REACT_APP_API_URL}api/users/${this.state.user.uuid}`, {
+        const req = await fetch(`${process.env.REACT_APP_API_URL}api/users/${user.uuid}`, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -64,7 +70,29 @@ export default class SignUp extends Component {
         }
     }
 
-    storeData = async (data) => {
+    deleteUser = async () => {
+        const { user, token } = this.state
+        const req = await fetch(`${process.env.REACT_APP_API_URL}api/users/${user.uuid}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        try {
+            const json = await req.json()
+            if (json.err) {
+                this.setState({ error: json.err.description })
+            } else {
+                //console.log(json.data)
+                await this.deleteDataStorage()
+                this.setState({ redirectionToSignIn: true })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    updateDataStorage = async (data) => {
         try {
             await localStorage.setItem('data', JSON.stringify(data))
         } catch (error) {
@@ -72,18 +100,35 @@ export default class SignUp extends Component {
         }
     }
 
+    deleteDataStorage = async () => {
+        try {
+            await localStorage.removeItem('data')
+        } catch (error) {
+            console.log('Local storage data Error : ', error)
+        }
+    }
+
     render() {
-        const { user } = this.state
-        return (
-            <div>
-                <p>There's sign up page !</p>
-                <input type="text" name="firstname" placeholder={user.firstname} value={this.state.firstname} onChange={this.handleChange} />
-                <input type="text" name="lastname" placeholder={user.lastname} value={this.state.lastname} onChange={this.handleChange} />
-                <input type="text" name="nickname" placeholder={user.nickname} value={this.state.nickname} onChange={this.handleChange} />
-                <input type="submit" value="Mettre à jour" onClick={this.updateUser} />
-                <p>{this.state.error}</p>
-                <Link to="/">Home</Link>
-            </div>
-        )
+        if (this.state.redirectionToSignIn) {
+            return <Redirect to='/signin' />
+        } else {
+            const { user } = this.state
+            return (
+                <div>
+                    <div>
+                        <p>There's sign up page !</p>
+                        <input type="text" name="firstname" placeholder={user.firstname} value={this.state.firstname} onChange={this.handleChange} />
+                        <input type="text" name="lastname" placeholder={user.lastname} value={this.state.lastname} onChange={this.handleChange} />
+                        <input type="text" name="nickname" placeholder={user.nickname} value={this.state.nickname} onChange={this.handleChange} />
+                        <input type="submit" value="Mettre à jour" onClick={this.updateUser} />
+                        <p>{this.state.error}</p>
+                        <Link to="/">Home</Link>
+                    </div>
+                    <div>
+                        <button onClick={this.deleteUser}>Delete user</button>
+                    </div>
+                </div>
+            )
+        }
     }
 }

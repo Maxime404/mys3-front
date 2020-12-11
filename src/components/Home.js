@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Redirect, Link } from 'react-router-dom'
+import { isEmpty } from 'lodash'
 
 export default class Home extends Component {
     constructor(props) {
@@ -16,14 +17,17 @@ export default class Home extends Component {
     }
 
     async getDataStorage() {
-        const data = await localStorage.getItem('data')
-        if (!data) {
-            console.log('No user')
+        const data = await JSON.parse(localStorage.getItem('data'))
+        const missings = this.state.storageItems.filter((storageItem) => data[storageItem])
+
+        if (!isEmpty(missings)) {
+            const isPlural = missings.length > 1
+
+            console.log(`Storage item${isPlural ? 's' : ''} [ ${missings.join(', ')} ] ${isPlural ? 'are' : 'is'} missing`)
             this.setState({ redirectionToSignIn: true })
         }
         else {
-            const jsonData = JSON.parse(data)
-            this.setState({ user: jsonData.user, token: jsonData.meta.token, })
+            this.setState({ user: data.user, token: data.meta.token, })
             console.log(this.state.user, this.state.token)
         }
     }

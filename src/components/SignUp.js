@@ -50,7 +50,7 @@ export default class SignUp extends Component {
         }
     }
 
-    storeData = async (data) => {
+    setDataStorage = async (data) => {
         try {
             await localStorage.setItem('data', JSON.stringify(data))
         } catch (error) {

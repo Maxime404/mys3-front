@@ -12,8 +12,7 @@ export default class SignUp extends Component {
             lastname: '',
             nickname: '',
             error: '',
-            redirectionToSignIn: false,
-            storageItems: ['user', 'token']
+            redirectionToSignIn: false
         }
     }
 
@@ -23,17 +22,11 @@ export default class SignUp extends Component {
 
     async getDataStorage() {
         const data = await JSON.parse(localStorage.getItem('data'))
-        const missings = this.state.storageItems.filter((storageItem) => data[storageItem])
-
-        if (!isEmpty(missings)) {
-            const isPlural = missings.length > 1
-
-            console.log(`Storage item${isPlural ? 's' : ''} [ ${missings.join(', ')} ] ${isPlural ? 'are' : 'is'} missing`)
+        if (!data || !data.user || !data.meta.token) {
+            console.log('Some storage item is missing')
             this.setState({ redirectionToSignIn: true })
-        }
-        else {
-            this.setState({ user: data.user, token: data.meta.token, })
-            console.log(this.state.user, this.state.token)
+        } else {
+            this.setState({ user: data.user, token: data.meta.token })
         }
     }
 

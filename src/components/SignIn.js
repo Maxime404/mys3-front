@@ -31,7 +31,7 @@ export default class SignIn extends Component {
                 this.setState({ error: json.err.description })
             } else {
                 //console.log(json.data)
-                await this.storeData(json.data)
+                await this.setDataStorage(json.data)
                 this.setState({ redirectionToHome: true })
             }
         } catch (error) {

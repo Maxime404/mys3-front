@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Redirect, Link } from 'react-router-dom'
-import { isEmpty } from 'lodash'
+
+import Header from './Header';
 
 export default class SignUp extends Component {
     constructor(props) {
@@ -103,22 +104,31 @@ export default class SignUp extends Component {
 
     render() {
         if (this.state.redirectionToSignIn) {
-            return <Redirect to='/signin' />
+            return <Redirect to='/sign-in' />
         } else {
             const { user } = this.state
             return (
-                <div>
-                    <div>
-                        <p>There's sign up page !</p>
-                        <input type="text" name="firstname" placeholder={user.firstname} value={this.state.firstname} onChange={this.handleChange} />
-                        <input type="text" name="lastname" placeholder={user.lastname} value={this.state.lastname} onChange={this.handleChange} />
-                        <input type="text" name="nickname" placeholder={user.nickname} value={this.state.nickname} onChange={this.handleChange} />
-                        <input type="submit" value="Mettre à jour" onClick={this.updateUser} />
+                <div className="auth-wrapper">
+                    <div className="auth-inner">
+                        <Header />
+
+                        <h3>Mon profil</h3>
+
+                        <div className="form-group">
+                            <label>Prénom</label>
+                            <input type="text" name="firstname" className="form-control" placeholder={user.firstname} value={this.state.firstname} onChange={this.handleChange} />
+                        </div>
+                        <div className="form-group">
+                            <label>Nom</label>
+                            <input type="text" name="lastname" className="form-control" placeholder={user.lastname} value={this.state.lastname} onChange={this.handleChange} />
+                        </div>
+                        <div className="form-group">
+                            <label>Pseudo</label>
+                            <input type="text" name="nickname" className="form-control" placeholder={user.nickname} value={this.state.nickname} onChange={this.handleChange} />
+                        </div>
                         <p>{this.state.error}</p>
-                        <Link to="/">Home</Link>
-                    </div>
-                    <div>
-                        <button onClick={this.deleteUser}>Delete user</button>
+                        <button type="submit" className="btn btn-primary btn-block" onClick={this.updateUser}>Mettre à jour mon profil</button>
+                        <button type="submit" className="btn btn-danger btn-block mt-5" onClick={this.deleteUser}>Supprimer mon compte</button>
                     </div>
                 </div>
             )

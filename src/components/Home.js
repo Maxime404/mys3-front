@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Redirect, Link } from 'react-router-dom'
-import { isEmpty } from 'lodash'
+
+import Header from './Header';
 
 export default class Home extends Component {
     constructor(props) {
@@ -28,14 +29,16 @@ export default class Home extends Component {
 
     render() {
         if (this.state.redirectionToSignIn) {
-            return <Redirect to='/signin' />
+            return <Redirect to='/sign-in' />
         } else {
             return (
-                <div>
-                    <p>There's home page !</p>
-                    <Link to="/profil">Profil</Link>
-                </div>
+                <div className="auth-wrapper">
+                    <div className="home-inner">
+                        <Header />
 
+                        <p className="d-flex justify-content-center mt-3">Home page en cours de construction...</p>
+                    </div>
+                </div>
             )
         }
     }

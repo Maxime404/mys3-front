@@ -52,13 +52,25 @@ export default class SignIn extends Component {
             return <Redirect to='/' />
         } else {
             return (
-                <div>
-                    <p>There's sign in page !</p>
-                    <input type="text" name="email" placeholder="email" value={this.state.email} onChange={this.handleChange} />
-                    <input type="password" name="password" placeholder="password" value={this.state.password} onChange={this.handleChange} />
-                    <input type="submit" value="Envoyer" onClick={this.signIn} />
-                    <p>{this.state.error}</p>
-                    <Link to="/signup">SignUp</Link>
+                <div className="auth-wrapper">
+                    <div className="auth-inner">
+                        <h3>Connexion</h3>
+
+                        <div className="form-group">
+                            <label>Adresse email</label>
+                            <input type="text" name="email" className="form-control" placeholder="Email" value={this.state.email} onChange={this.handleChange} />
+                        </div>
+                        <div className="form-group">
+                            <label>Mot de passe</label>
+                            <input type="password" name="password" className="form-control" placeholder="Mot de passe" value={this.state.password} onChange={this.handleChange} />
+                        </div>
+                        <p>{this.state.error}</p>
+                        <button type="submit" className="btn btn-primary btn-block" onClick={this.signIn}>Se connecter</button>
+                        <p className="forgot-password text-right">
+                            <Link to="/sign-up">Mot de passe oublié ?</Link>
+                        </p>
+                        <p className="d-flex justify-content-center mt-4">Pas encore inscrit ?&nbsp;<Link to="/sign-up">Créer un compte ici !</Link></p>
+                    </div>
                 </div>
             )
         }

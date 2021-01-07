@@ -51,7 +51,7 @@ export default class Bucket extends Component {
                     })
                 } else {
 
-                    throw new Error(json.err.description)
+                    console.log(json.err.description)
                 }
             })
             .catch((error) => {
@@ -126,7 +126,6 @@ export default class Bucket extends Component {
                             </div>
                             <div className="row">
                                 {this.state.blobs.map((blob) => {
-
                                     return <Blob blob={blob} user={this.state.user} bucket_name={blob.bucket.name} key={blob.id} />
                                 })}
                             </div>

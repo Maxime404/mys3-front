@@ -1,21 +1,7 @@
 import React, { Component } from 'react'
 import { Redirect, Link } from 'react-router-dom'
-import { FaFolder } from 'react-icons/fa';
+import { FaFolder, FaRegWindowClose } from 'react-icons/fa';
 import Header from './Header';
-
-export function BucketFolder({ bucket }) {
-
-    return (
-        <div className='col-4'>
-            <Link className='text-decoration-none' to={'bucket/' + bucket.id} >
-                <FaFolder size="2em" />
-                <span className='ml-2'>{bucket.name}</span>
-            </Link>
-
-        </div>
-    )
-
-}
 
 export default class Home extends Component {
     constructor(props) {
@@ -62,7 +48,7 @@ export default class Home extends Component {
         }).then((response) => response.json())
             .then((json) => {
                 if (json.data && json.data.bucket) {
-                    console.log(json.data);
+                    //console.log(json.data);
                     this.setState({
                         buckets: json.data.bucket
                     })
@@ -97,11 +83,15 @@ export default class Home extends Component {
         }
     }
 
+    deleteBucket = async () => {
+        console.log('delete bucket')
+    }
+
     render() {
         if (this.state.redirectionToSignIn) {
             return <Redirect to='/sign-in' />
         } else {
-            const { error, isCreatedBucket, bucketName } = this.state
+            const { error, isCreatedBucket, bucketName, buckets } = this.state
             return (
                 <div className="container auth-wrapper">
                     <div className="row">
@@ -119,8 +109,18 @@ export default class Home extends Component {
 
                             <div className="container">
                                 <div className="row">
-                                    {this.state.buckets.map((bucket) => {
-                                        return <BucketFolder bucket={bucket} key={bucket.id} />
+                                    {buckets.length > 1 && buckets.map((bucket) => {
+                                        return (
+                                            <div className="col-4">
+                                                <div class="d-inline" onClick={this.deleteBucket}>
+                                                    <FaRegWindowClose size="1em" className="mr-2 text-danger" />
+                                                </div>
+                                                <Link className="d-inline text-decoration-none" to={'bucket/' + bucket.id} >
+                                                    <FaFolder size="2em" />
+                                                    <span className="ml-2">{bucket.name}</span>
+                                                </Link>
+                                            </div>
+                                        )
                                     })}
                                 </div>
                             </div>

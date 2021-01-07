@@ -33,42 +33,46 @@ export default class SignUp extends Component {
     }
 
     handleChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value })
+        this.setState({ [event.target.name]: event.target.value, isUpdatedUser: false, error: '' })
     }
 
     updateUser = async () => {
-        const { user, token } = this.state
-        const req = await fetch(`${process.env.REACT_APP_API_URL}api/users/${user.uuid}`, {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                firstname: this.state.firstname ? this.state.firstname.trim() : user.firstname,
-                lastname: this.state.lastname ? this.state.lastname.trim() : user.lastname,
-                nickname: this.state.nickname ? this.state.nickname.trim() : user.nickname,
-            })
-        })
-        try {
-            const json = await req.json()
-            if (json.err) {
-                this.setState({ error: json.err.description })
-            } else {
-                //console.log(json.data)
-                await this.updateDataStorage({
-                    user: json.data.user,
-                    meta: {
-                        token: this.state.token
-                    }
+        const { user, token, firstname, lastname, nickname } = this.state
+        if (!firstname && !lastname && !nickname) {
+            this.setState({ error: "You need to modify a minimum of one field" })
+        } else {
+            const req = await fetch(`${process.env.REACT_APP_API_URL}api/users/${user.uuid}`, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    firstname: this.state.firstname ? firstname.trim() : user.firstname,
+                    lastname: this.state.lastname ? lastname.trim() : user.lastname,
+                    nickname: this.state.nickname ? nickname.trim() : user.nickname,
                 })
-                this.setState({ isUpdatedUser: true })
-                console.log('User updated !')
+            })
+            try {
+                const json = await req.json()
+                if (json.err) {
+                    this.setState({ error: json.err.description })
+                } else {
+                    //console.log(json.data)
+                    await this.updateDataStorage({
+                        user: json.data.user,
+                        meta: {
+                            token: this.state.token
+                        }
+                    })
+                    this.setState({ isUpdatedUser: true })
+                    console.log('User updated !')
 
+                }
+            } catch (error) {
+                console.log(error);
             }
-        } catch (error) {
-            console.log(error);
         }
     }
 
@@ -121,7 +125,7 @@ export default class SignUp extends Component {
         if (this.state.redirectionToSignIn) {
             return <Redirect to='/sign-in' />
         } else {
-            const { user, isUpdatedUser, error} = this.state
+            const { user, isUpdatedUser, error } = this.state
             return (
                 <div className="container auth-wrapper">
                     <div className="row">
@@ -142,10 +146,8 @@ export default class SignUp extends Component {
                                 <label>Pseudo</label>
                                 <input type="text" name="nickname" className="form-control" placeholder={user.nickname} value={this.state.nickname} onChange={this.handleChange} />
                             </div>
-                            <p>{error}</p>
-                            {isUpdatedUser &&
-                                <div className="notify-block mb-3">Profil mis-à-jour !</div>
-                            }
+                            {isUpdatedUser && <div className="block-message block-notify mb-3">Profil mis-à-jour !</div>}
+                            {error && <div className="block-message block-error mb-3">{error}</div>}
                             <button type="submit" className="btn btn-primary btn-block" onClick={this.updateUser}>Mettre à jour mon profil</button>
                             <button type="submit" className="btn btn-secondary btn-block" onClick={this.logOutUser}>Se déconnecter</button>
                             <button type="submit" className="btn btn-danger btn-block mt-5" onClick={this.deleteUser}>Supprimer mon compte</button>

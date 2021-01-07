@@ -11,42 +11,51 @@ export default class SignUp extends Component {
             email: '',
             password: '',
             passwordConfirmation: '',
+            isCheckedBox: false,
             error: '',
             redirectionToHome: false,
         }
     }
 
     handleChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value })
+        this.setState({ [event.target.name]: event.target.value, error: '' })
+    }
+
+    toggleChangeCheckbox = () => {
+        this.setState({ isCheckedBox: !this.state.isCheckedBox })
     }
 
     signUp = async () => {
-        const req = await fetch(`${process.env.REACT_APP_API_URL}api/authenticate/signup`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                firstname: this.state.firstname.trim(),
-                lastname: this.state.lastname.trim(),
-                nickname: this.state.nickname.trim(),
-                email: this.state.email.trim(),
-                password: this.state.password.trim(),
-                passwordConfirmation: this.state.passwordConfirmation.trim()
+        if (!this.state.isCheckedBox) {
+            this.setState({ error: "You need to accept general terms of use" })
+        } else {
+            const req = await fetch(`${process.env.REACT_APP_API_URL}api/authenticate/signup`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    firstname: this.state.firstname.trim(),
+                    lastname: this.state.lastname.trim(),
+                    nickname: this.state.nickname.trim(),
+                    email: this.state.email.trim(),
+                    password: this.state.password.trim(),
+                    passwordConfirmation: this.state.passwordConfirmation.trim()
+                })
             })
-        })
-        try {
-            const json = await req.json()
-            if (json.err) {
-                this.setState({ error: json.err.description })
-            } else {
-                //console.log(json.data)
-                await this.setDataStorage(json.data)
-                this.setState({ redirectionToHome: true })
+            try {
+                const json = await req.json()
+                if (json.err) {
+                    this.setState({ error: json.err.description })
+                } else {
+                    //console.log(json.data)
+                    await this.setDataStorage(json.data)
+                    this.setState({ redirectionToHome: true })
+                }
+            } catch (error) {
+                console.log(error);
             }
-        } catch (error) {
-            console.log(error);
         }
     }
 
@@ -62,6 +71,7 @@ export default class SignUp extends Component {
         if (this.state.redirectionToHome) {
             return <Redirect to='/' />
         } else {
+            const { error } = this.state
             return (
                 <div className="container auth-wrapper">
                     <div className="row">
@@ -94,11 +104,11 @@ export default class SignUp extends Component {
                             </div>
                             <div className="form-group">
                                 <div className="custom-control custom-checkbox">
-                                    <input type="checkbox" className="custom-control-input" id="customCheck1" />
-                                    <label className="custom-control-label" htmlFor="customCheck1">J'accepte les conditions générales d'utilisation</label>
+                                    <input type="checkbox" name="checkboxLogin" className="custom-control-input" id="checkboxLogin" onChange={this.toggleChangeCheckbox} />
+                                    <label className="custom-control-label" htmlFor="checkboxLogin">J'accepte les conditions générales d'utilisation</label>
                                 </div>
                             </div>
-                            <p>{this.state.error}</p>
+                            {error && <div className="block-message block-error mb-3">{error}</div>}
                             <button type="submit" className="btn btn-primary btn-block" onClick={this.signUp}>Valider</button>
                             <p className="d-flex justify-content-center mt-4">Déjà inscrit ?&nbsp;<Link to="/sign-in">Connecte toi ici !</Link></p>
                         </div>

@@ -13,7 +13,7 @@ export default class SignIn extends Component {
     }
 
     handleChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value })
+        this.setState({ [event.target.name]: event.target.value, error: '' })
     }
 
     signIn = async () => {
@@ -51,6 +51,7 @@ export default class SignIn extends Component {
         if (this.state.redirectionToHome) {
             return <Redirect to='/' />
         } else {
+            const { error } = this.state
             return (
                 <div className="container auth-wrapper">
                     <div className="row">
@@ -65,7 +66,7 @@ export default class SignIn extends Component {
                                 <label>Mot de passe</label>
                                 <input type="password" name="password" className="form-control" placeholder="Mot de passe" value={this.state.password} onChange={this.handleChange} />
                             </div>
-                            <p>{this.state.error}</p>
+                            {error && <div className="block-message block-error mb-3">{error}</div>}
                             <button type="submit" className="btn btn-primary btn-block" onClick={this.signIn}>Se connecter</button>
                             <p className="forgot-password text-right">
                                 <Link to="/reset-password">Mot de passe oublié ?</Link>

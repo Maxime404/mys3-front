@@ -25,7 +25,8 @@ export default class Home extends Component {
             user: {},
             token: '',
             buckets: [],
-            bucketName: ''
+            bucketName: '',
+            isCreatedBucket: false
         }
     }
 
@@ -45,7 +46,7 @@ export default class Home extends Component {
     }
 
     handleChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value })
+        this.setState({ [event.target.name]: event.target.value, error: '', isCreatedBucket: false })
     }
 
     getBuckets = async () => {
@@ -73,8 +74,8 @@ export default class Home extends Component {
     }
 
     createBucket = async () => {
-        const { uuid, bucketName, token } = this.state
-        const req = await fetch(`${process.env.REACT_APP_API_URL}api/users/${uuid}/buckets`, {
+        const { user, bucketName, token } = this.state
+        const req = await fetch(`${process.env.REACT_APP_API_URL}api/users/${user.uuid}/buckets`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -88,8 +89,8 @@ export default class Home extends Component {
             if (json.err) {
                 this.setState({ error: json.err.description })
             } else {
-                console.log(json.data)
-                //this.setState({ redirectionToHome: true })
+                this.getBuckets();
+                this.state({ isCreatedBucket: true })
             }
         } catch (error) {
             console.log(error);
@@ -100,20 +101,21 @@ export default class Home extends Component {
         if (this.state.redirectionToSignIn) {
             return <Redirect to='/sign-in' />
         } else {
+            const { error, isCreatedBucket, bucketName } = this.state
             return (
                 <div className="container auth-wrapper">
                     <div className="row">
                         <div className="home-inner col-sm-12 col-md-12 col-lg-10 px-4">
                             <Header />
-                            <form >
-                                <div className='form-group'>
-                                    <label>
-                                        Nom du Bucket :
+                            <div className='form-group'>
+                                <label>
+                                    Nom du Bucket :
                                         <input type="text" name="bucketName" className="form-control" placeholder="Ex: covid-19 ❤" value={this.state.bucketName} onChange={this.handleChange} />
-                                    </label>
-                                    <button type="submit" className="btn btn-primary ml-2" onClick={this.createBucket}>Créer</button>
-                                </div>
-                            </form>
+                                </label>
+                                <button type="submit" className="btn btn-primary ml-2" onClick={this.createBucket}>Créer</button>
+                            </div>
+                            {isCreatedBucket && <div className="block-message block-notify mb-3">Nouveau bucket créé</div>}
+                            {error && <div className="block-message block-error mb-3">{error}</div>}
 
                             <div className="container">
                                 <div className="row">
@@ -122,7 +124,6 @@ export default class Home extends Component {
                                     })}
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>

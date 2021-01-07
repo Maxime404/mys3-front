@@ -13,11 +13,15 @@ export default class ResetPassword extends Component {
     }
 
     handleChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value })
+        this.setState({ [event.target.name]: event.target.value, error: '' })
     }
 
     resetPassword = async () => {
-        const req = await fetch(`${process.env.REACT_APP_API_URL}api/reset-password/${this.state.email}`, {
+        const { email } = this.state
+        if(!email) {
+            this.setState({ error: "Field email is missing" })
+        }
+        const req = await fetch(`${process.env.REACT_APP_API_URL}api/reset-password/${email}`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -39,6 +43,8 @@ export default class ResetPassword extends Component {
     }
 
     render() {
+        const { error, message } = this.state
+
         if (!this.state.emailSent) {
             return (
                 <div className="container auth-wrapper">
@@ -51,7 +57,7 @@ export default class ResetPassword extends Component {
                                 <label>Adresse email</label>
                                 <input type="text" name="email" className="form-control" placeholder="Email" value={this.state.email} onChange={this.handleChange} />
                             </div>
-                            <p>{this.state.error}</p>
+                            {error && <div className="block-message block-error mb-3">{error}</div>}
                             <button type="submit" className="btn btn-primary btn-block" onClick={this.resetPassword}>Valider</button>
                             <p className="d-flex justify-content-center mt-4"><Link to="/sign-in">Retour</Link></p>
                         </div>
@@ -65,7 +71,7 @@ export default class ResetPassword extends Component {
                         <div className="auth-inner col-sm-12 col-md-6 col-lg-3 px-4">
                             <h3>Rendez-vous dans votre boîte mail !</h3>
 
-                            <p className="text-center">{this.state.message}</p>
+                            <p className="text-center">{message}</p>
                             <p className="d-flex justify-content-center mt-4"><Link to="/sign-in">Retour à la connexion</Link></p>
                         </div>
                     </div>

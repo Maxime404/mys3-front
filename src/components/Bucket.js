@@ -1,15 +1,17 @@
 import React, { Component } from 'react'
 import { Redirect ,Link} from 'react-router-dom'
 import { FaFolder } from 'react-icons/fa';
+
 import Header from './Header';
 
-export function BucketFolder({bucket}){
+
+export function Blob({blob}){
 
     return   (
     <div className='col-4'>
-     <Link className='text-decoration-none' to={'bucket/'+bucket.id} >
+     <Link className='text-decoration-none' >
      <FaFolder size="2em" />
-     <span className='ml-2'>{bucket.name}</span>
+     <span className='ml-2'>{blob.name}</span>
      </Link>
 
     </div>
@@ -17,20 +19,22 @@ export function BucketFolder({bucket}){
 
 }
 
-export default class Home extends Component {
+
+export default class Bucket extends Component {
     constructor(props) {
         super(props);
         this.state = {
             redirectionToSignIn: false,
             user: {},
             token: '',
-            buckets:[]
+            blobs:[]
         }
     }
 
-    getBuckets = async () => {
+    getBlobs = async () => {
         const {token} = this.state
-        return fetch(`${process.env.REACT_APP_API_URL}api/users/${this.state.user.uuid}/buckets`, {
+        const id =this.props.match.params.id
+        return fetch(`${process.env.REACT_APP_API_URL}api/users/${this.state.user.uuid}/buckets/${id}/blobs/`, {
           method: 'GET',
           headers:
             new Headers({
@@ -41,20 +45,25 @@ export default class Home extends Component {
         })
           .then((response) => response.json())
           .then((json) => {
-            this.setState({
-              buckets : json.data.bucket})
+            if(json.data){
+                this.setState({
+                blobs : json.data})
+            }
+            else{
+                throw new Error(json.err.description)
+            }
+          
           })
           .catch((error) => {
-            console.error(error);
+            console.log(error);
           })
       }
 
     async componentDidMount() {
         await this.getDataStorage()
         if (this.state.token !==''){
-            this.getBuckets()
+            this.getBlobs()
         }
-
     }
 
     async getDataStorage() {
@@ -69,35 +78,21 @@ export default class Home extends Component {
 
 
     render() {
-        
+        console.log(this.state);
         if (this.state.redirectionToSignIn) {
             return <Redirect to='/sign-in' />
         } else {
             return (
                 <div className="auth-wrapper">
-          
                     <div className="home-inner">
                         <Header />
-                        <form >
-                            <div className='form-group'>
-                            <label>
-                            Nom du dossier:
-                            <input type="text" name="name" className="form-control" />
-                             </label>
-                             <button type="submit" class=" ml-2 btn btn-primary">Creer </button>
-                            </div>
-                        </form>
-                    
                         <div className="container">
                             <div className="row">
-                            {this.state.buckets.map((bucket) => {
-                                return <BucketFolder bucket={bucket} key={bucket.id} />
+                            {this.state.blobs.map((blob) => {
+                                return <Blob bucket={blob} key={blob.id} />
                             })}
                             </div>
-                        </div>
-                    
-                        
-                        
+                        </div>   
                     </div>
                 </div>
             )

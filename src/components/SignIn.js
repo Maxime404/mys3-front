@@ -55,7 +55,6 @@ export default class SignIn extends Component {
                 <div className="auth-wrapper">
                     <div className="auth-inner">
                         <h3>Connexion</h3>
-
                         <div className="form-group">
                             <label>Adresse email</label>
                             <input type="text" name="email" className="form-control" placeholder="Email" value={this.state.email} onChange={this.handleChange} />

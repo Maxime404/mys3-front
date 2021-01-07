@@ -41,9 +41,13 @@ export default class Home extends Component {
         })
             .then((response) => response.json())
             .then((json) => {
-                this.setState({
-                    buckets: json.data.bucket
-                })
+                if(json.data && json.data.bucket){
+                    console.log(json.data);
+                    this.setState({
+                        buckets: json.data.bucket
+                    })
+                }
+         
             })
             .catch((error) => {
                 console.error(error);
@@ -86,6 +90,7 @@ export default class Home extends Component {
                             <input type="text" name="name" className="form-control" />
                                     </label>
                                     <button type="submit" class=" ml-2 btn btn-primary">Creer </button>
+                                    
                                 </div>
                             </form>
 

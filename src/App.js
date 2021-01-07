@@ -8,6 +8,7 @@ import Home from './components/Home'
 import SignIn from './components/SignIn'
 import SignUp from './components/SignUp'
 import Profil from './components/Profil'
+import ResetPassword from './components/ResetPassword';
 
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
                     <Route path="/sign-in" component={SignIn} />
                     <Route path="/sign-up" component={SignUp} />
                     <Route path="/profil" component={Profil} />
+                    <Route path="/reset-password" component={ResetPassword} />
                 </Switch>
             </div>
         </Router >

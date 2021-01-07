@@ -32,11 +32,13 @@ export default class Home extends Component {
             return <Redirect to='/sign-in' />
         } else {
             return (
-                <div className="auth-wrapper">
-                    <div className="home-inner">
-                        <Header />
+                <div className="container auth-wrapper">
+                    <div className="row">
+                        <div className="home-inner col-sm-12 col-md-12 col-lg-10 px-4">
+                            <Header />
 
-                        <p className="d-flex justify-content-center mt-3">Home page en cours de construction...</p>
+                            <p className="d-flex justify-content-center mt-3">Home page en cours de construction...</p>
+                        </div>
                     </div>
                 </div>
             )

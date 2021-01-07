@@ -24,42 +24,14 @@ export default class Home extends Component {
             redirectionToSignIn: false,
             user: {},
             token: '',
-            buckets: []
+            buckets: [],
+            bucketName: ''
         }
-    }
-
-    getBuckets = async () => {
-        const { token } = this.state
-        return fetch(`${process.env.REACT_APP_API_URL}api/users/${this.state.user.uuid}/buckets`, {
-            method: 'GET',
-            headers:
-                new Headers({
-                    'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                    'Content-Type': 'application/json'
-                })
-        })
-            .then((response) => response.json())
-            .then((json) => {
-                if(json.data && json.data.bucket){
-                    console.log(json.data);
-                    this.setState({
-                        buckets: json.data.bucket
-                    })
-                }
-         
-            })
-            .catch((error) => {
-                console.error(error);
-            })
     }
 
     async componentDidMount() {
         await this.getDataStorage()
-        if (this.state.token !== '') {
-            this.getBuckets()
-        }
-
+        this.getBuckets()
     }
 
     async getDataStorage() {
@@ -72,9 +44,59 @@ export default class Home extends Component {
         }
     }
 
+    handleChange = (event) => {
+        this.setState({ [event.target.name]: event.target.value })
+    }
+
+    getBuckets = async () => {
+        const { token } = this.state
+        return fetch(`${process.env.REACT_APP_API_URL}api/users/${this.state.user.uuid}/buckets`, {
+            method: 'GET',
+            headers:
+                new Headers({
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                })
+        }).then((response) => response.json())
+            .then((json) => {
+                if (json.data && json.data.bucket) {
+                    console.log(json.data);
+                    this.setState({
+                        buckets: json.data.bucket
+                    })
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            })
+    }
+
+    createBucket = async () => {
+        const { uuid, bucketName, token } = this.state
+        const req = await fetch(`${process.env.REACT_APP_API_URL}api/users/${uuid}/buckets`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ name: bucketName.trim() })
+        })
+        try {
+            const json = await req.json()
+            if (json.err) {
+                this.setState({ error: json.err.description })
+            } else {
+                console.log(json.data)
+                //this.setState({ redirectionToHome: true })
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     render() {
-
         if (this.state.redirectionToSignIn) {
             return <Redirect to='/sign-in' />
         } else {
@@ -86,11 +108,10 @@ export default class Home extends Component {
                             <form >
                                 <div className='form-group'>
                                     <label>
-                                        Nom du dossier:
-                            <input type="text" name="name" className="form-control" />
+                                        Nom du Bucket :
+                                        <input type="text" name="bucketName" className="form-control" placeholder="Ex: covid-19 ❤" value={this.state.bucketName} onChange={this.handleChange} />
                                     </label>
-                                    <button type="submit" class=" ml-2 btn btn-primary">Creer </button>
-                                    
+                                    <button type="submit" className="btn btn-primary ml-2" onClick={this.createBucket}>Créer</button>
                                 </div>
                             </form>
 

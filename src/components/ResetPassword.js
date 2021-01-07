@@ -65,7 +65,7 @@ export default class ResetPassword extends Component {
                         <div className="auth-inner col-sm-12 col-md-6 col-lg-3 px-4">
                             <h3>Rendez-vous dans votre boîte mail !</h3>
 
-                            <p>{this.state.message}</p>
+                            <p className="text-center">{this.state.message}</p>
                             <p className="d-flex justify-content-center mt-4"><Link to="/sign-in">Retour à la connexion</Link></p>
                         </div>
                     </div>

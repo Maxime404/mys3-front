@@ -83,3 +83,17 @@ body, html, .App, #root, .auth-wrapper {
 .forgot-password a {
     color: #167bff;
 }
+
+.notify-block {
+    display: block;
+    width: 100%;
+    color: #808080;
+    font-weight: 400;
+    text-align: center;
+    border: 1px solid transparent;
+    background-color: #FFF;
+    border-color: #808080;
+    border-radius: .25rem;
+    padding: .375rem .75rem;
+    transition: all .3s;
+}

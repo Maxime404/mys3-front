@@ -30,7 +30,7 @@ export default class SignIn extends Component {
             if (json.err) {
                 this.setState({ error: json.err.description })
             } else {
-                //console.log(json.data)
+                console.log(json.data)
                 await this.setDataStorage(json.data)
                 this.setState({ redirectionToHome: true })
             }
@@ -54,7 +54,7 @@ export default class SignIn extends Component {
             return (
                 <div className="container auth-wrapper">
                     <div className="row">
-                        <div className="auth-inner col-sm-12 col-md-6 col-lg-3 px-4">
+                        <div className="auth-inner align-middle col-sm-12 col-md-6 col-lg-3 px-4">
                             <h3>Connexion</h3>
 
                             <div className="form-group">

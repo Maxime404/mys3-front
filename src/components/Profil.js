@@ -13,6 +13,7 @@ export default class SignUp extends Component {
             lastname: '',
             nickname: '',
             error: '',
+            isUpdatedUser: false,
             redirectionToSignIn: false
         }
     }
@@ -56,12 +57,25 @@ export default class SignUp extends Component {
                 this.setState({ error: json.err.description })
             } else {
                 //console.log(json.data)
-                await this.storeData(json.data)
+                await this.updateDataStorage({
+                    user: json.data.user,
+                    meta: {
+                        token: this.state.token
+                    }
+                })
+                this.setState({ isUpdatedUser: true })
                 console.log('User updated !')
+
             }
         } catch (error) {
             console.log(error);
         }
+    }
+
+    logOutUser = async () => {
+        await this.deleteDataStorage()
+        this.setState({ redirectionToSignIn: true })
+
     }
 
     deleteUser = async () => {
@@ -88,6 +102,7 @@ export default class SignUp extends Component {
 
     updateDataStorage = async (data) => {
         try {
+            console.log(data)
             await localStorage.setItem('data', JSON.stringify(data))
         } catch (error) {
             console.log('Local storage data Error : ', error)
@@ -106,7 +121,7 @@ export default class SignUp extends Component {
         if (this.state.redirectionToSignIn) {
             return <Redirect to='/sign-in' />
         } else {
-            const { user } = this.state
+            const { user, isUpdatedUser, error} = this.state
             return (
                 <div className="container auth-wrapper">
                     <div className="row">
@@ -127,8 +142,12 @@ export default class SignUp extends Component {
                                 <label>Pseudo</label>
                                 <input type="text" name="nickname" className="form-control" placeholder={user.nickname} value={this.state.nickname} onChange={this.handleChange} />
                             </div>
-                            <p>{this.state.error}</p>
+                            <p>{error}</p>
+                            {isUpdatedUser &&
+                                <div className="notify-block mb-3">Profil mis-à-jour !</div>
+                            }
                             <button type="submit" className="btn btn-primary btn-block" onClick={this.updateUser}>Mettre à jour mon profil</button>
+                            <button type="submit" className="btn btn-secondary btn-block" onClick={this.logOutUser}>Se déconnecter</button>
                             <button type="submit" className="btn btn-danger btn-block mt-5" onClick={this.deleteUser}>Supprimer mon compte</button>
                         </div>
                     </div>

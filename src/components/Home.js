@@ -90,7 +90,7 @@ export default class Home extends Component {
                 this.setState({ error: json.err.description })
             } else {
                 this.getBuckets();
-                this.state({ isCreatedBucket: true })
+                this.setState({ isCreatedBucket: true })
             }
         } catch (error) {
             console.log(error);

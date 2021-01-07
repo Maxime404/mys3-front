@@ -1,21 +1,7 @@
 import React, { Component } from 'react'
 import { Redirect, Link } from 'react-router-dom'
-import { FaFolder } from 'react-icons/fa';
+import { FaFolder, FaRegWindowClose } from 'react-icons/fa';
 import Header from './Header';
-
-export function BucketFolder({ bucket }) {
-
-    return (
-        <div className='col-4'>
-            <Link className='text-decoration-none' to={'bucket/' + bucket.id} >
-                <FaFolder size="2em" />
-                <span className='ml-2'>{bucket.name}</span>
-            </Link>
-
-        </div>
-    )
-
-}
 
 export default class Home extends Component {
     constructor(props) {
@@ -97,6 +83,10 @@ export default class Home extends Component {
         }
     }
 
+    deleteBucket = async () => {
+        console.log('delete bucket')
+    }
+
     render() {
         if (this.state.redirectionToSignIn) {
             return <Redirect to='/sign-in' />
@@ -120,7 +110,15 @@ export default class Home extends Component {
                             <div className="container">
                                 <div className="row">
                                     {this.state.buckets.map((bucket) => {
-                                        return <BucketFolder bucket={bucket} key={bucket.id} />
+                                        <div className='col-4'>
+                                            <div onClick={this.deleteBucket}>
+                                                <FaRegWindowClose size="1em" className='mr-2 text-danger' />
+                                            </div>
+                                            <Link className='text-decoration-none' to={'bucket/' + bucket.id} >
+                                                <FaFolder size="2em" />
+                                                <span className='ml-2'>{bucket.name}</span>
+                                            </Link>
+                                        </div>
                                     })}
                                 </div>
                             </div>

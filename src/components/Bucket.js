@@ -1,20 +1,20 @@
 import React, { Component } from 'react'
-import { Redirect ,Link} from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 import { FaFolder } from 'react-icons/fa';
 
 import Header from './Header';
 
 
-export function Blob({blob}){
+export function Blob({ blob }) {
 
-    return   (
-    <div className='col-4'>
-     <Link className='text-decoration-none' >
-     <FaFolder size="2em" />
-     <span className='ml-2'>{blob.name}</span>
-     </Link>
-
-    </div>
+    return (
+        <div className='col-4'>
+            <Link className='text-decoration-none' >
+                <FaFolder size="2em" />
+                <span className='ml-2'>{blob.name}</span>
+            </Link>
+            
+        </div>
     )
 
 }
@@ -27,41 +27,40 @@ export default class Bucket extends Component {
             redirectionToSignIn: false,
             user: {},
             token: '',
-            blobs:[]
+            blobs: []
         }
     }
 
     getBlobs = async () => {
-        const {token} = this.state
-        const id =this.props.match.params.id
+        const { token } = this.state
+        const id = this.props.match.params.id
         return fetch(`${process.env.REACT_APP_API_URL}api/users/${this.state.user.uuid}/buckets/${id}/blobs/`, {
-          method: 'GET',
-          headers:
-            new Headers({
-              'Accept': 'application/json',
-              'Authorization': 'Bearer ' + token,
-              'Content-Type': 'application/json'
-            })
+            method: 'GET',
+            headers:
+                new Headers({
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+                })
         })
-          .then((response) => response.json())
-          .then((json) => {
-            if(json.data){
-                this.setState({
-                blobs : json.data})
-            }
-            else{
-                throw new Error(json.err.description)
-            }
-          
-          })
-          .catch((error) => {
-            console.log(error);
-          })
-      }
+            .then((response) => response.json())
+            .then((json) => {
+                if (json.data) {
+                    this.setState({
+                        blobs: json.data
+                    })
+                } else {
+                    console.log(json.err.description)
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
 
     async componentDidMount() {
         await this.getDataStorage()
-        if (this.state.token !==''){
+        if (this.state.token !== '') {
             this.getBlobs()
         }
     }
@@ -88,11 +87,11 @@ export default class Bucket extends Component {
                         <Header />
                         <div className="container">
                             <div className="row">
-                            {this.state.blobs.map((blob) => {
-                                return <Blob bucket={blob} key={blob.id} />
-                            })}
+                                {this.state.blobs.map((blob) => {
+                                    return <Blob bucket={blob} key={blob.id} />
+                                })}
                             </div>
-                        </div>   
+                        </div>
                     </div>
                 </div>
             )

@@ -112,9 +112,9 @@ export default class Home extends Component {
                                     {buckets.length > 1 && buckets.map((bucket) => {
                                         return (
                                             <div className="col-4">
-                                                <div class="d-inline" onClick={this.deleteBucket}>
+                                                {/* <div className="d-inline" onClick={this.deleteBucket}>
                                                     <FaRegWindowClose size="1em" className="mr-2 text-danger" />
-                                                </div>
+                                                </div> */}
                                                 <Link className="d-inline text-decoration-none" to={'bucket/' + bucket.id} >
                                                     <FaFolder size="2em" />
                                                     <span className="ml-2">{bucket.name}</span>

@@ -1,19 +1,19 @@
 import React, { Component } from 'react'
-import { Redirect ,Link} from 'react-router-dom'
-import { FaFolder } from 'react-icons/fa';
+import { Redirect } from 'react-router-dom'
+import { FcImageFile } from 'react-icons/fc';
+import { ExternalLink } from 'react-external-link';
 
 import Header from './Header';
 
 
-export function Blob({blob}){
+export function Blob({blob,user,bucket_name}){
 
     return   (
     <div className='col-4'>
-     <Link className='text-decoration-none' >
-     <FaFolder size="2em" />
+     <ExternalLink className='text-decoration-none' href ={`https://mys3-mj.s3.eu-west-3.amazonaws.com/mys3DATA/${user.uuid}/${bucket_name}/${blob.name}`} >
+     <FcImageFile size="2em" />
      <span className='ml-2'>{blob.name}</span>
-     </Link>
-
+     </ExternalLink>
     </div>
     )
 
@@ -27,7 +27,9 @@ export default class Bucket extends Component {
             redirectionToSignIn: false,
             user: {},
             token: '',
-            blobs:[]
+            blobs:[],
+            file :null,
+            error:null
         }
     }
 
@@ -45,11 +47,12 @@ export default class Bucket extends Component {
         })
           .then((response) => response.json())
           .then((json) => {
-            if(json.data){
+            if(json){
                 this.setState({
-                blobs : json.data})
+                blobs : json})
             }
             else{
+                
                 throw new Error(json.err.description)
             }
           
@@ -61,9 +64,7 @@ export default class Bucket extends Component {
 
     async componentDidMount() {
         await this.getDataStorage()
-        if (this.state.token !==''){
-            this.getBlobs()
-        }
+        this.getBlobs()
     }
 
     async getDataStorage() {
@@ -76,9 +77,41 @@ export default class Bucket extends Component {
         }
     }
 
+    createBlob = async () => {
+        console.log('file ',this.state.file);
+        const formData = new FormData()
+        formData.append( 
+            "data", 
+            this.state.file, 
+            this.state.file.name 
+          )
+        const id =this.props.match.params.id
+        const {token} = this.state
+        fetch(`${process.env.REACT_APP_API_URL}api/users/${this.state.user.uuid}/buckets/${id}/blobs/`, {
+            method: 'POST',
+            body:formData,
+            headers:
+              new Headers({
+                'Authorization': 'Bearer ' + token
+              })
+        }).then(()=>{
+            this.getBlobs()
+        }).catch((err)=>{
+            console.error(err)
+        })
+    }
+
+
+    handleChange(e){
+        e.preventDefault() 
+        this.setState({
+            file : e.target.files[0]
+        })
+    }
+
+
 
     render() {
-        console.log(this.state);
         if (this.state.redirectionToSignIn) {
             return <Redirect to='/sign-in' />
         } else {
@@ -87,9 +120,17 @@ export default class Bucket extends Component {
                     <div className="home-inner">
                         <Header />
                         <div className="container">
+                        <div className='form-group'>
+                                    <label>
+                                        Importer un fichier :
+                                        <input type="file"  className="form-control" placeholder="Ex: covid-19 ❤"  onChange={(e)=>{this.handleChange(e)}} />
+                                    </label>
+                                    <button type="submit" className="btn btn-primary ml-2" onClick={this.createBlob}>Créer</button>
+                        </div>
                             <div className="row">
                             {this.state.blobs.map((blob) => {
-                                return <Blob bucket={blob} key={blob.id} />
+                            
+                                return <Blob blob={blob} user = {this.state.user} bucket_name = {blob.bucket.name} key={blob.id} />
                             })}
                             </div>
                         </div>   

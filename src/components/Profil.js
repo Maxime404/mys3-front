@@ -108,27 +108,29 @@ export default class SignUp extends Component {
         } else {
             const { user } = this.state
             return (
-                <div className="auth-wrapper">
-                    <div className="auth-inner">
-                        <Header />
+                <div className="container auth-wrapper">
+                    <div className="row">
+                        <div className="auth-inner col-sm-12 col-md-6 col-lg-3 px-4">
+                            <Header />
 
-                        <h3>Mon profil</h3>
+                            <h3>Mon profil</h3>
 
-                        <div className="form-group">
-                            <label>Prénom</label>
-                            <input type="text" name="firstname" className="form-control" placeholder={user.firstname} value={this.state.firstname} onChange={this.handleChange} />
+                            <div className="form-group">
+                                <label>Prénom</label>
+                                <input type="text" name="firstname" className="form-control" placeholder={user.firstname} value={this.state.firstname} onChange={this.handleChange} />
+                            </div>
+                            <div className="form-group">
+                                <label>Nom</label>
+                                <input type="text" name="lastname" className="form-control" placeholder={user.lastname} value={this.state.lastname} onChange={this.handleChange} />
+                            </div>
+                            <div className="form-group">
+                                <label>Pseudo</label>
+                                <input type="text" name="nickname" className="form-control" placeholder={user.nickname} value={this.state.nickname} onChange={this.handleChange} />
+                            </div>
+                            <p>{this.state.error}</p>
+                            <button type="submit" className="btn btn-primary btn-block" onClick={this.updateUser}>Mettre à jour mon profil</button>
+                            <button type="submit" className="btn btn-danger btn-block mt-5" onClick={this.deleteUser}>Supprimer mon compte</button>
                         </div>
-                        <div className="form-group">
-                            <label>Nom</label>
-                            <input type="text" name="lastname" className="form-control" placeholder={user.lastname} value={this.state.lastname} onChange={this.handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label>Pseudo</label>
-                            <input type="text" name="nickname" className="form-control" placeholder={user.nickname} value={this.state.nickname} onChange={this.handleChange} />
-                        </div>
-                        <p>{this.state.error}</p>
-                        <button type="submit" className="btn btn-primary btn-block" onClick={this.updateUser}>Mettre à jour mon profil</button>
-                        <button type="submit" className="btn btn-danger btn-block mt-5" onClick={this.deleteUser}>Supprimer mon compte</button>
                     </div>
                 </div>
             )

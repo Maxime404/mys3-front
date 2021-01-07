@@ -52,23 +52,35 @@ export default class SignIn extends Component {
             return <Redirect to='/' />
         } else {
             return (
+<<<<<<< HEAD
                 <div className="auth-wrapper">
                     <div className="auth-inner">
                         <h3>Connexion</h3>
                         <div className="form-group">
                             <label>Adresse email</label>
                             <input type="text" name="email" className="form-control" placeholder="Email" value={this.state.email} onChange={this.handleChange} />
+=======
+                <div className="container auth-wrapper">
+                    <div className="row">
+                        <div className="auth-inner col-sm-12 col-md-6 col-lg-3 px-4">
+                            <h3>Connexion</h3>
+
+                            <div className="form-group">
+                                <label>Adresse email</label>
+                                <input type="text" name="email" className="form-control" placeholder="Email" value={this.state.email} onChange={this.handleChange} />
+                            </div>
+                            <div className="form-group">
+                                <label>Mot de passe</label>
+                                <input type="password" name="password" className="form-control" placeholder="Mot de passe" value={this.state.password} onChange={this.handleChange} />
+                            </div>
+                            <p>{this.state.error}</p>
+                            <button type="submit" className="btn btn-primary btn-block" onClick={this.signIn}>Se connecter</button>
+                            <p className="forgot-password text-right">
+                                <Link to="/reset-password">Mot de passe oublié ?</Link>
+                            </p>
+                            <p className="d-flex justify-content-center mt-4">Pas encore inscrit ?&nbsp;<Link to="/sign-up">Créer un compte ici !</Link></p>
+>>>>>>> f3100f05435957d336de94211eaf26a6fe4b564a
                         </div>
-                        <div className="form-group">
-                            <label>Mot de passe</label>
-                            <input type="password" name="password" className="form-control" placeholder="Mot de passe" value={this.state.password} onChange={this.handleChange} />
-                        </div>
-                        <p>{this.state.error}</p>
-                        <button type="submit" className="btn btn-primary btn-block" onClick={this.signIn}>Se connecter</button>
-                        <p className="forgot-password text-right">
-                            <Link to="/sign-up">Mot de passe oublié ?</Link>
-                        </p>
-                        <p className="d-flex justify-content-center mt-4">Pas encore inscrit ?&nbsp;<Link to="/sign-up">Créer un compte ici !</Link></p>
                     </div>
                 </div>
             )
